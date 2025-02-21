@@ -4,13 +4,24 @@ import tkinter as tk
 from tkinter import messagebox, filedialog
 from tkinter import ttk
 import subprocess
+import threading
+from PIL import Image, ImageTk  # Import PIL for image handling
+
 from addStudent import open_add_student  # Import the function from add_student.py
 
-VENV_PYTHON = os.path.join(os.getcwd(), ".venv", "Scripts", "python.exe")  # Windows
+VENV_PYTHON = os.path.join(os.getcwd(), ".venv", "Scripts", "python.exe")
+
 
 # Function to run face recognition script
 def run_face_recognition():
     subprocess.run([VENV_PYTHON, "main.py"])
+
+def run_encode_generator():
+    subprocess.run([VENV_PYTHON, "Encode-Generator.py"])
+
+def take_attendance():
+    threading.Thread(target=run_face_recognition, daemon=True).start()
+    threading.Thread(target=run_encode_generator, daemon=True).start()
 
 # Function to view attendance file
 def view_attendance():
@@ -23,19 +34,22 @@ def view_attendance():
 root = tk.Tk()
 root.title("Face Attendance System")
 root.geometry("640x480")
-root.configure(bg="#0096FF")
-
+bg_img=Image.open("Resources/app-bg.png")
+bg_img=bg_img.resize((640,480))
+bg_photo=ImageTk.PhotoImage(bg_img)
+bg_label = tk.Label(root, image=bg_photo)
+bg_label.place(relwidth=1, relheight=1)
 # Custom Styling
 style = ttk.Style()
-style.configure("TButton", font=("Arial", 14), padding=10, background="#4CAF50", foreground="black")
-style.configure("Title.TLabel", font=("Arial", 18, "bold"), background="#f4f4f4", foreground="#333")
+style.configure("TButton",  borderwidth=5, font=("Arial", 14), padding=5, background="#00BFFF", foreground="black", activebackground="#5F9EA0", activeforeground="white")
+style.configure("Title.TLabel", font=("Times", 20, "bold"), foreground="#333")
 
 # Title Label
 title_label = ttk.Label(root, text="Face Attendance System", style="Title.TLabel")
-title_label.pack(pady=20)
+title_label.pack(pady=60)
 
 # Buttons
-take_attendance_btn = ttk.Button(root, text="Take Attendance", command=run_face_recognition)
+take_attendance_btn = ttk.Button(root, text="Take Attendance", command=take_attendance)
 take_attendance_btn.pack(pady=15, ipadx=20)
 
 view_attendance_btn = ttk.Button(root, text="View Attendance", command=view_attendance)
