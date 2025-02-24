@@ -61,6 +61,27 @@ def open_add_student(root):
         else:
             messagebox.showerror("Error", "All fields are required!")
 
+    def delete_student_from_db():
+        student_id = id_entry.get()  # Get the student ID from the entry field
+        if student_id:
+            try:
+                conn = sqlite3.connect("E:/8th sem/New folder/PythonProject/Database/attendance.db")
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM attendance WHERE student_id = ?", (student_id,))
+                conn.commit()
+
+                # Check if a record was actually deleted
+                if cursor.rowcount > 0:
+                    messagebox.showinfo("Success", f"Student with ID {student_id} deleted successfully!")
+                else:
+                    messagebox.showerror("Error", "Student ID not found!")
+
+                conn.close()
+            except Exception as e:
+                messagebox.showerror("Error", f"An error occurred: {e}")
+        else:
+            messagebox.showerror("Error", "Please enter a student ID.")
+
     # Create the "Add Student" window
     add_window = tk.Toplevel(root)
     add_window.title("Add Student")
@@ -97,3 +118,7 @@ def open_add_student(root):
     show_button = tk.Button(add_window, text="Show Detail & Add Student", font=("Arial", 12), bg="#007BFF", fg="white",
                             relief="flat", width=20, height=2, command=show_details)
     show_button.pack(pady=15)
+
+    delete_button = tk.Button(add_window, text="Delete Student", font=("Arial", 12), bg="#FF5733", fg="white",
+                              relief="flat", width=20, height=2, command=delete_student_from_db)
+    delete_button.pack(pady=10)
