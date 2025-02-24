@@ -1,7 +1,7 @@
-# add_student.py
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk
+import sqlite3
 
 def open_add_student(root):
     # Function to handle photo upload
@@ -11,13 +11,34 @@ def open_add_student(root):
             photo_label.config(text="Photo Selected")
             add_window.photo_path = file_path
 
-    # Function to show student details
+    # Function to save student to database
+    def save_student_to_db(student_id, name, course, photo_path):
+        try:
+            conn = sqlite3.connect("E:/8th sem/New folder/PythonProject/Database/attendance.db")
+            cursor = conn.cursor()
+            cursor.execute('''
+            INSERT INTO attendance (student_id, name, course, photo_path)
+            VALUES (?, ?, ?, ?)
+            ''', (student_id, name, course, photo_path))
+            conn.commit()
+            conn.close()
+            messagebox.showinfo("Success", "Student added successfully!")
+        except sqlite3.IntegrityError:
+            messagebox.showerror("Error", "Student ID already exists.")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+
+    # Function to show student details and save data to DB
     def show_details():
         student_id = id_entry.get()
         name = name_entry.get()
+        course = course_entry.get()
         photo_path = getattr(add_window, "photo_path", None)
 
-        if student_id and name and photo_path:
+        if student_id and name and course and photo_path:
+            # Save student to database
+            save_student_to_db(student_id, name, course, photo_path)
+
             # Open a new window to show student details
             details_window = tk.Toplevel(add_window)
             details_window.title("Student Details")
@@ -26,6 +47,7 @@ def open_add_student(root):
 
             tk.Label(details_window, text=f"ID: {student_id}", font=("Arial", 14), bg="#f0f0f0", fg="#333").pack(pady=10)
             tk.Label(details_window, text=f"Name: {name}", font=("Arial", 14), bg="#f0f0f0", fg="#333").pack(pady=10)
+            tk.Label(details_window, text=f"Course: {course}", font=("Arial", 14), bg="#f0f0f0", fg="#333").pack(pady=10)
 
             # Display the selected image
             img = Image.open(photo_path)
@@ -58,14 +80,20 @@ def open_add_student(root):
     name_entry = tk.Entry(add_window, font=("Arial", 12), width=25, bd=2, relief="solid")
     name_entry.pack(pady=10)
 
+    tk.Label(add_window, text="Course", font=("Arial", 12), bg="#F5F5F5", fg="#333").pack(pady=5)
+    course_entry = tk.Entry(add_window, font=("Arial", 12), width=25, bd=2, relief="solid")
+    course_entry.pack(pady=10)
+
     # Label to show if photo is selected
     photo_label = tk.Label(add_window, text="No photo selected", font=("Arial", 12), bg="#F5F5F5", fg="#333")
     photo_label.pack(pady=10)
 
     # Button to upload photo
-    upload_button = tk.Button(add_window, text="Upload Photo", font=("Arial", 12), bg="#4CAF50", fg="white", relief="flat", width=20, height=2, command=upload_photo)
+    upload_button = tk.Button(add_window, text="Upload Photo", font=("Arial", 12), bg="#4CAF50", fg="white",
+                              relief="flat", width=20, height=2, command=upload_photo)
     upload_button.pack(pady=10)
 
-    # Button to show student details
-    show_button = tk.Button(add_window, text="Show Details", font=("Arial", 12), bg="#007BFF", fg="white", relief="flat", width=20, height=2, command=show_details)
+    # Button to show student details (and add student data to the database)
+    show_button = tk.Button(add_window, text="Show Detail & Add Student", font=("Arial", 12), bg="#007BFF", fg="white",
+                            relief="flat", width=20, height=2, command=show_details)
     show_button.pack(pady=15)
