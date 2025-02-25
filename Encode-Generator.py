@@ -3,7 +3,10 @@ import face_recognition
 import pickle
 import os
 
-modePath = "Images"
+#from main import modePath
+
+#modePath = "Images"
+modePath="Database/Images"
 modePathList = os.listdir(modePath)
 imgList = []
 studentId = []
