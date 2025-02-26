@@ -4,8 +4,11 @@ from PIL import Image, ImageTk
 import sqlite3
 import os
 
+from Database.database import cursor
+
 # Folder to store images
 IMAGE_FOLDER = "Database/Images"
+
 
 # Ensure the folder exists
 if not os.path.exists(IMAGE_FOLDER):
@@ -80,6 +83,7 @@ def open_add_student(root):
         else:
             messagebox.showerror("Error", "All fields are required!")
 
+
     add_window = tk.Toplevel(root)
     add_window.title("Add Student")
     add_window.geometry("400x500")
@@ -108,7 +112,7 @@ def open_add_student(root):
     upload_button.pack(pady=10)
 
     show_button = tk.Button(add_window, text="Show Detail & Add Student", font=("Arial", 12), bg="#007BFF", fg="white",
-                            relief="flat", width=20, height=2, command=show_details)
+                            relief="flat", width=25, height=2, command=show_details)
     show_button.pack(pady=15)
 
     add_window.mainloop()

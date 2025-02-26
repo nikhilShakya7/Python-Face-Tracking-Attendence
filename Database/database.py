@@ -14,6 +14,7 @@ cursor.execute('''
         timestamp TEXT,
         photo BLOB
     )
+    
 ''')
 
 

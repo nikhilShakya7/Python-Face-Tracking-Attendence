@@ -7,7 +7,10 @@ import subprocess
 import threading
 from PIL import Image, ImageTk  # Import PIL for image handling
 
-from addStudent import open_add_student  # Import the function from add_student.py
+from addStudent import open_add_student
+from removeStudent import remove_student
+
+# Import the function from add_student.py
 
 VENV_PYTHON = os.path.join(os.getcwd(), ".venv", "Scripts", "python.exe")
 
@@ -85,6 +88,7 @@ style.configure("TButton", borderwidth=5, font=("Arial", 14), padding=5, backgro
                 activebackground="#5F9EA0", activeforeground="white")
 style.configure("Title.TLabel", font=("Times", 20, "bold"), foreground="#333")
 
+
 # Title Label
 title_label = ttk.Label(root, text="Face Attendance System", style="Title.TLabel")
 title_label.pack(pady=60)
@@ -99,6 +103,9 @@ view_attendance_btn.pack(pady=15, ipadx=20)
 # Add Student Button
 add_student_btn = ttk.Button(root, text="Add Student", command=lambda: open_add_student(root))
 add_student_btn.pack(pady=15, ipadx=20)
+
+remove_student_btn = ttk.Button(root, text="Remove Student", command=lambda: remove_student(root))
+remove_student_btn.pack(pady=15, ipadx=20)
 
 # Run the GUI
 root.mainloop()
